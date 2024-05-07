@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model coffee {
+  id           Int            @unique @default(autoincrement())
+  name         String         @default("")
+  size         String         @default("")
+  price        Float          @default(0)
+  image        String         @default("")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  order_detail order_detail[]
+}
+
+model admin {
+  id        Int      @unique @default(autoincrement())
+  name      String   @default("")
+  email     String   @default("") @unique
+  password  String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model order_detail {
+  id            Int        @unique @default(autoincrement())
+  coffe_id      Int
+  order_id      Int
+  quantity      Int        @default(0)
+  price         Float      @default(0)
+  image         String     @default("")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  coffe_details coffee     @relation(fields: [coffe_id], references: [id])
+  order_list    order_list @relation(fields: [order_id], references: [id])
+}
+
+model order_list {
+  id            Int            @unique @default(autoincrement())
+  customer_name String         @default("")
+  order_type    String         @default("")
+  order_date    String         @default("")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  order_detail  order_detail[]
+}
